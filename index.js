@@ -32,10 +32,22 @@ async function run() {
 
     const doctorsCollection = client.db('DoctorDB').collection('Doctors');
 
+    /***
+     * 1.Find Operation : Find() not access to full data from monogo because of render.if find access to allow full data memory will error. 
+     * 1.1 Query using for filter data.
+     * 1.2 project() : this using for specific felid like show felid or not show felid. it's receive four values (eg true, false, 0, 1).
+     * 1.3 sort(): sort using for sorting data it's receive two values (eg 0, 1).
+     * 1.4 skip(): skip using for skip front values(1, 2, 3, 4).skip(2)---> (3,4).
+     * 1.5 limit(): limit using for skip end values(1,2,3,4).limit(2)--->(1,2).
+     * ***/
     app.get('/doctors', async(req, res)=>{
-        // const query = {category:"fruits"}
-        const result = await doctorsCollection.find().toArray();
-        res.send(result)
+        const query = {category:"drink"} // query using for filter data
+        // const cursor = doctorsCollection.find(query).sort({price: 1}) // query
+        // const cursor = doctorsCollection.find(query).project({name:1, _id:0});//project
+        // const cursor = doctorsCollection.find().sort({price: 1}).skip(5);//skip
+        const cursor = doctorsCollection.find().sort({price: 1}).limit(2);//limit 
+        const result = await cursor.toArray();
+        res.send(result);
     })
 
 
