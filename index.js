@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const app = express();
 const port = 5000;
@@ -45,11 +45,20 @@ async function run() {
         // const cursor = doctorsCollection.find(query).sort({price: 1}) // query
         // const cursor = doctorsCollection.find(query).project({name:1, _id:0});//project
         // const cursor = doctorsCollection.find().sort({price: 1}).skip(5);//skip
-        const cursor = doctorsCollection.find().sort({price: 1}).limit(2);//limit 
+        const cursor = doctorsCollection.find();// .sort({price: 1}).limit(2) limit 
         const result = await cursor.toArray();
         res.send(result);
     })
 
+    // Get single data 
+    app.get('/doctors/:id', async(req, res)=>{
+      const id = req.params.id;
+      console.log(id);
+      const query = {_id : new ObjectId(id)};
+      const result = await doctorsCollection.findOne(query);
+      console.log(result);
+      res.send(result);
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -63,4 +72,4 @@ run().catch(console.dir);
 
 app.listen(port, ()=>{
     console.log(`server is running ${port}`)
-})
+}) 
